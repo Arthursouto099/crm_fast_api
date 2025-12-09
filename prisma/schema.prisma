@@ -5,10 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider   = "prisma-client"
-  output     = "../generated"
+  provider = "prisma-client"
+  output   = "../generated"
 }
-
 
 datasource db {
   provider = "postgresql"
@@ -20,10 +19,112 @@ enum Roles {
   GUEST
 }
 
+enum RolesProject {
+  ADMIN
+  MEMBER
+  VIEWER
+} 
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  DRAFT
+}
+
 model User {
   id_user  String @id @default(uuid())
   name     String
   role     Roles  @default(GUEST)
   email    String @unique
   password String
+  userProjects UserProject[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+  projects Project[]
+}
+
+
+model UserProject {
+  id_user String 
+  id_project String
+  user User @relation(fields: [id_user], references: [id_user])
+  roleNoProject RolesProject @default(MEMBER)
+  joinedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  project Project @relation(fields: [id_project], references: [id_project])
+  @@id([id_user, id_project]) 
+}
+
+model Project {
+  id_project String @id @default(uuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id_user])
+  title String
+  description String
+  background_url String? 
+  status ProjectStatus @default(ACTIVE)
+  usersProject UserProject[]
+  color String?
+  isPublic Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  actionPlans ActionPlan[]
+}
+
+
+model ActionPlan {
+  id_action_plan String       @id @default(uuid())
+  id_project String
+  project Project @relation(fields: [id_project], references: [id_project])
+  title          String
+  context        String?
+  origin         OriginType   @default(OUTRO)
+  status         PlanStatus   @default(ABERTO)
+  dueDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  actions        ActionItem[]
+
+}
+
+model ActionItem {
+  id_action_item String       @id @default(uuid())
+  actionPlan     ActionPlan   @relation(fields: [actionPlanId], references: [id_action_plan])
+  actionPlanId   String
+  description    String
+  dueDate        DateTime?
+  status         ActionStatus @default(PLANEJADA)
+  priority       Priority     @default(MEDIA)
+  cost           Float?
+  evidenceUrl    String?
+  progress       Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum OriginType {
+  NC
+  RISCO
+  OPORTUNIDADE
+  OUTRO
+}
+
+enum PlanStatus {
+  ABERTO
+  EM_ANDAMENTO
+  CONCLUIDO
+  ATRASADO
+}
+
+enum ActionStatus {
+  PLANEJADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum Priority {
+  BAIXA
+  MEDIA
+  ALTA
 }

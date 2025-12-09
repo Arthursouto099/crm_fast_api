@@ -12,7 +12,7 @@ const prismaPlugin = fp(async (fastify: FastifyInstance) => {
   await prisma.$connect();
 
 
-  fastify.decorate("prisma", prisma as PrismaClient);
+  fastify.decorate("db", prisma as PrismaClient);
 
   fastify.addHook("onClose", async () => {
     await prisma.$disconnect();
