@@ -12,11 +12,11 @@ import { SignType, UserCreateType, UserIdParamType, UserUpdateType } from '../sc
 
 export default class UserController {
   private service: UserService
-  private emailService: EmailService
+  // private emailService: EmailService
 
   constructor(db: PrismaClient) {
     this.service = new UserService(db)
-    this.emailService = new EmailService()
+    // this.emailService = new EmailService()
   }
 
   public async signup(
@@ -25,16 +25,16 @@ export default class UserController {
   ): Promise<void> {
     const user: SafeUser = await this.service.create(req.body)
     const token: string = await reply.jwtSign(generatePayload(user))
-    try {
-      await this.emailService.sendEmail({
-        to: user.email,
-        subject: `Bem-vindo ao TEAM CODE`,
-        text: `Olá, ${user.email}, seu cadastro na plataforma foi um sucesso.`,
-        html: `<h1>Olá, ${user.name}!</h1><p>Seu cadastro foi realizado com sucesso.</p>`,
-      })
-    } catch (e: any) {
-      console.log(e)
-    }
+    // try {
+    //   await this.emailService.sendEmail({
+    //     to: user.email,
+    //     subject: `Bem-vindo ao TEAM CODE`,
+    //     text: `Olá, ${user.email}, seu cadastro na plataforma foi um sucesso.`,
+    //     html: `<h1>Olá, ${user.name}!</h1><p>Seu cadastro foi realizado com sucesso.</p>`,
+    //   })
+    // } catch (e: any) {
+    //   console.log(e)
+    // }
     return reply.status(StatusCodes.CREATED).send({ token, user })
   }
 
