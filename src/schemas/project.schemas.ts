@@ -11,6 +11,7 @@ export const projectBaseSchema = z.object({
   status: z.enum(ProjectStatus).optional(),
   color: z.string().max(16, 'Cor muito longa').nullable().optional(),
   isPublic: z.boolean().optional().default(true),
+  category: z.string()
 })
 
 // 🟢 CREATE (body que vem do cliente – sem ownerId)

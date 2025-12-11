@@ -18,6 +18,7 @@ const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 
 app.register(fastifyCors, {
   origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 })
 
 initializeApp(app).then(() => {

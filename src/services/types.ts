@@ -8,6 +8,7 @@ export const UserSelectKeysRecords = {
   createdAt: true,
   updatedAt: true,
   password: false,
+  profile_image: true,
 } as const
 
 type SelectedKeys = {

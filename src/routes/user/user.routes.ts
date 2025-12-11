@@ -1,10 +1,13 @@
-
 import UserController from '../../controllers/user.controller'
 import authMiddleware from '../../middlewares/auth'
-import { userIdParamSchema, UserIdParamType, userUpdateSchema, UserUpdateType } from '../../schemas/user.schemas'
+import {
+  userIdParamSchema,
+  UserIdParamType,
+  userUpdateSchema,
+  UserUpdateType,
+} from '../../schemas/user.schemas'
 import { FastifyInstanceTyped } from '../../types/types'
 import { PaginationArgs, paginationSchema } from '../../utils/pagination'
-
 
 export default async function userRoutes(app: FastifyInstanceTyped) {
   const controller = new UserController(app.db)
@@ -22,7 +25,7 @@ export default async function userRoutes(app: FastifyInstanceTyped) {
   app.get<{
     Params: UserIdParamType
   }>(
-    '/admin/collaborator/:id_user',
+    '/admin/:id_user',
     {
       preHandler: [authMiddleware],
       schema: {

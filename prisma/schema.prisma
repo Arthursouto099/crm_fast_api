@@ -37,6 +37,7 @@ model User {
   role     Roles  @default(GUEST)
   email    String @unique
   password String
+  profile_image String @default("")
   userProjects UserProject[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
@@ -68,6 +69,7 @@ model Project {
   isPublic Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  category String @default("OUTRO")
   actionPlans ActionPlan[]
 }
 

@@ -8,7 +8,7 @@ import {
   UpdateProjectType,
 } from '../schemas/project.schemas'
 import { initPagination, PaginationArgs } from '../utils/pagination'
-import { UserSelectedRecordsType, UserSelectKeysRecords } from './types'
+import {UserSelectKeysRecords } from './types'
 
 export default class ProjectServices {
   constructor(private db: PrismaClient) {}
