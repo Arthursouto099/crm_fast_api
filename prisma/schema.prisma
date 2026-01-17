@@ -14,119 +14,124 @@ datasource db {
 }
 
 enum Roles {
-  ADMIN
-  COLLABOR
-  GUEST
+  ADM
+  OWNER
+  COLABORADOR
+  USUARIO
 }
 
-enum RolesProject {
-  ADMIN
-  MEMBER
-  VIEWER
-} 
-
-enum ProjectStatus {
-  ACTIVE
-  ARCHIVED
-  DRAFT
+enum TypePlan {
+  GRATIS
+  BASICO
+  AVANCADO
 }
+
+
 
 model User {
   id_user  String @id @default(uuid())
   name     String
-  role     Roles  @default(GUEST)
+  role     Roles  @default(USUARIO)
   email    String @unique
   password String
   profile_image String @default("")
-  userProjects UserProject[]
+  typePlan TypePlan @default(GRATIS)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-  projects Project[]
+  updatedAt DateTime @updatedAt 
+  store Store[]
+  movement_stocks MovementStock[]
 }
 
 
-model UserProject {
-  id_user String 
-  id_project String
-  user User @relation(fields: [id_user], references: [id_user])
-  roleNoProject RolesProject @default(MEMBER)
-  joinedAt DateTime @default(now())
-  isActive Boolean @default(true)
-  project Project @relation(fields: [id_project], references: [id_project])
-  @@id([id_user, id_project]) 
-}
-
-model Project {
-  id_project String @id @default(uuid())
-  ownerId String
-  owner User @relation(fields: [ownerId], references: [id_user])
-  title String
-  description String
-  background_url String? 
-  status ProjectStatus @default(ACTIVE)
-  usersProject UserProject[]
-  color String?
-  isPublic Boolean @default(false)
+model Store {
+  id_store String @id @default(uuid())
+  id_owner String
+  store_name String 
+  owner User @relation(fields: [id_owner], references: [id_user], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  category String @default("OUTRO")
-  actionPlans ActionPlan[]
+  store_image String?
+  logo String?
+  store_bio String?
+  products Product[]
+  movements_stocks MovementStock[]
 }
 
 
-model ActionPlan {
-  id_action_plan String       @id @default(uuid())
-  id_project String
-  project Project @relation(fields: [id_project], references: [id_project])
-  title          String
-  context        String?
-  origin         OriginType   @default(OUTRO)
-  status         PlanStatus   @default(ABERTO)
-  dueDate        DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  actions        ActionItem[]
+enum typeMovement {
+  AJUSTE
+  SAIDA
+  ENTRADA
+}
+
+model MovementStock {
+  id_movementStock String @id @default(uuid())
+  id_store String 
+  id_user String
+  id_product String
+  createdAt DateTime @default(now())
+  quantity Int
+  typeMovement typeMovement @default(ENTRADA)
+  store Store @relation(fields: [id_store], references: [id_store])
+  user User @relation(fields: [id_user], references: [id_user]) 
+  product Product @relation(fields: [id_product], references: [id_product])
 
 }
 
-model ActionItem {
-  id_action_item String       @id @default(uuid())
-  actionPlan     ActionPlan   @relation(fields: [actionPlanId], references: [id_action_plan])
-  actionPlanId   String
-  description    String
-  dueDate        DateTime?
-  status         ActionStatus @default(PLANEJADA)
-  priority       Priority     @default(MEDIA)
-  cost           Float?
-  evidenceUrl    String?
-  progress       Int          @default(0)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+
+model Product {
+  id_product String @id @default(uuid())
+  id_store String
+  store Store @relation(fields: [id_store], references: [id_store], onDelete: Cascade)
+  product_name String
+  product_description String 
+  product_price Decimal @db.Decimal(10, 2)
+  sizeMl Int?
+  product_image String?
+  stock_quantity Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+  category String @default("Produto")
+  // quando tiver apenas n unidades, alertar de reposição
+  low_stock_at Int?
+  movement_stocks MovementStock[]
 }
 
-enum OriginType {
-  NC
-  RISCO
-  OPORTUNIDADE
-  OUTRO
+
+enum TypeCustomer {
+  PF
+  PJ
 }
 
-enum PlanStatus {
-  ABERTO
-  EM_ANDAMENTO
-  CONCLUIDO
-  ATRASADO
+
+model Customer {
+  id_customer String @id @default(uuid())
+  name_customer String 
+  type TypeCustomer 
+  document_customer String 
+  email_customer String 
+  phone_customer String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active Boolean @default(true)
+  id_address String
+  addresses CustomerAddress[]
+  
+  // novos campos ---> proxima atualização
 }
 
-enum ActionStatus {
-  PLANEJADA
-  EM_ANDAMENTO
-  CONCLUIDA
-  CANCELADA
-}
 
-enum Priority {
-  BAIXA
-  MEDIA
-  ALTA
+model CustomerAddress {
+  id_customerAddress String @id @default(uuid())
+  id_customer String 
+  customer Customer @relation(fields: [id_customer], references: [id_customer])
+  cep String
+  isDefault Boolean @default(false)
+  street String
+  number String
+  complement String
+  city String
+  state String
+  country String
+
 }

@@ -1,11 +1,17 @@
 import { z } from 'zod'
+import { storeZodSchema } from './store.schema'
 
 export const userCreateSchema = z.object({
   name: z.string({ error: 'Nome requirido!' }).min(2),
   email: z.email({ error: 'Use um e-mail valído' }),
-  role: z.enum(['ADMIN', 'GUEST', 'COLLABOR']).default('GUEST'),
+  role: z.enum(['ADM', 'OWNER', 'COLABORADOR', 'USUARIO']).default('USUARIO'),
   profile_image: z.url().optional(),
   password: z.string().min(4, { error: 'Minimo de 4 caracteres' }),
+})
+
+export const userWithStoreSchema =  z.object({
+  ...userCreateSchema.shape,
+  ...storeZodSchema.shape
 })
 
 export const signSchema = z.object({
@@ -17,6 +23,7 @@ export const userUpdateSchema = userCreateSchema.omit({ password: true, role: tr
 export const userIdParamSchema = z.object({ id_user: z.uuid() })
 
 export type UserCreateType = z.infer<typeof userCreateSchema>
+export type UserWithStoreType = z.infer<typeof userWithStoreSchema>
 export type SignType = z.infer<typeof signSchema>
 export type UserUpdateType = z.infer<typeof userUpdateSchema>
 export type UserIdParamType = z.infer<typeof userIdParamSchema>

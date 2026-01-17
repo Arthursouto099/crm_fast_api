@@ -10,6 +10,8 @@ import fastifySwaggerUi from '@fastify/swagger-ui'
 import routes from './routes/routes'
 import fastifyJwt from '@fastify/jwt'
 import AppErrorGlobalHandler from './handlers/AppErrorGlobalHandler'
+import type { CookieSerializeOptions } from '@fastify/cookie'
+import cookie from '@fastify/cookie'
 
 const initializeApp = async (app: FastifyInstance) => {
   app.register(prismaPlugin)
@@ -34,7 +36,7 @@ const initializeApp = async (app: FastifyInstance) => {
   })
 
   app.setErrorHandler(AppErrorGlobalHandler)
-
+  app.register(cookie)
   app.register(routes, { prefix: '/api' })
 }
 

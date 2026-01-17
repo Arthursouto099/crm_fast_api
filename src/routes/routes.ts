@@ -3,7 +3,9 @@ import { FastifyInstanceTyped } from '../types/types'
 import { z } from 'zod'
 import userRoutes from './user/user.routes'
 import authRoutes from './user/auth.routes'
-import ProjectRoutes from './project/project.routes'
+import StoreRoutes from './store/store.routes'
+import ProjectRoutes from './product/product.routes'
+import MovementStockRoutes from './movementStock/movementStock.routes'
 
 const admSchema = z.object({
   name: z.string(),
@@ -13,5 +15,7 @@ const admSchema = z.object({
 export default async function routes(app: FastifyInstanceTyped) {
   app.register(userRoutes, { prefix: '/user' })
   app.register(authRoutes, { prefix: '/auth' })
-  app.register(ProjectRoutes, {prefix: '/project'})
+  app.register(StoreRoutes, { prefix: '/store' })
+  app.register(ProjectRoutes, { prefix: '/products' })
+  app.register(MovementStockRoutes, {prefix: "/movement"})
 }

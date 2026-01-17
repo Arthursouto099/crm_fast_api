@@ -1,17 +1,16 @@
 import UserController from '../../controllers/user.controller'
 import validateSchema from '../../middlewares/schema'
-import { signSchema, SignType, userCreateSchema, UserCreateType } from '../../schemas/user.schemas'
+import { signSchema, SignType, userCreateSchema, UserCreateType, userWithStoreSchema, UserWithStoreType} from '../../schemas/user.schemas'
 import { FastifyInstanceTyped } from '../../types/types'
 
 export default async function authRoutes(app: FastifyInstanceTyped) {
   const controller = new UserController(app.db)
 
-  app.post<{ Body: UserCreateType }>(
+  app.post<{ Body: UserWithStoreType }>(
     '/signup',
     {
-      preHandler: validateSchema(userCreateSchema),
       schema: {
-        body: userCreateSchema,
+        body: userWithStoreSchema,
       },
     },
     (req, res) => {

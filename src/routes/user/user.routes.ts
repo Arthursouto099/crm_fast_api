@@ -25,19 +25,16 @@ export default async function userRoutes(app: FastifyInstanceTyped) {
   app.get<{
     Params: UserIdParamType
   }>(
-    '/admin/:id_user',
+    '/me',
     {
       preHandler: [authMiddleware],
-      schema: {
-        params: userIdParamSchema,
-      },
     },
     (req, reply) => {
       return controller.find(req, reply)
     },
   )
 
-  app.get<{ Params: PaginationArgs }>(
+  app.get<{ Querystring: PaginationArgs }>(
     '/admin/collaborators',
     {
       preHandler: [authMiddleware],
@@ -46,7 +43,13 @@ export default async function userRoutes(app: FastifyInstanceTyped) {
       },
     },
     (req, reply) => {
-      return controller.findAll(req, reply)
+      return controller.findAll(
+        {
+          ...req,
+          query: paginationSchema.parse(req.query),
+        },
+        reply,
+      )
     },
   )
 
@@ -54,12 +57,11 @@ export default async function userRoutes(app: FastifyInstanceTyped) {
     Body: UserUpdateType
     Params: UserIdParamType
   }>(
-    '/update/:id_user',
+    '/update',
     {
       preHandler: [authMiddleware],
       schema: {
         body: userUpdateSchema,
-        params: userIdParamSchema,
       },
     },
     (req, reply) => {

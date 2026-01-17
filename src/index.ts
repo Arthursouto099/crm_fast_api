@@ -17,8 +17,10 @@ declare module 'fastify' {
 const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 
 app.register(fastifyCors, {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  origin: true,
+  credentials: true,
+  allowedHeaders: ['content-type'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
 })
 
 initializeApp(app).then(() => {
