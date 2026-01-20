@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { z } from 'zod'
 
 export const findProductById = z.object({
   id_product: z.uuid(),

@@ -12,6 +12,7 @@ import fastifyJwt from '@fastify/jwt'
 import AppErrorGlobalHandler from './handlers/AppErrorGlobalHandler'
 import type { CookieSerializeOptions } from '@fastify/cookie'
 import cookie from '@fastify/cookie'
+import authMiddleware from './middlewares/auth'
 
 const initializeApp = async (app: FastifyInstance) => {
   app.register(prismaPlugin)
@@ -37,6 +38,7 @@ const initializeApp = async (app: FastifyInstance) => {
 
   app.setErrorHandler(AppErrorGlobalHandler)
   app.register(cookie)
+  app.addHook("preHandler", authMiddleware)
   app.register(routes, { prefix: '/api' })
 }
 

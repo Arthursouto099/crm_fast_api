@@ -14,58 +14,51 @@ export default async function MovementStockRoutes(app: FastifyInstanceTyped) {
         params: findStoreByIdStore,
         querystring: paginationSchema,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
-        return controller.findAllByStore(
-            {
-                ...req,
-                query: paginationSchema.parse(req.query)
-            },
-            reply
-        )
-    }
+      return controller.findAllByStore(
+        {
+          ...req,
+          query: paginationSchema.parse(req.query),
+        },
+        reply,
+      )
+    },
   )
 
-
-  app.get<{Params: FindStoreByIdStore}>(
-    "/metrics/entries/:id_store",
-    {schema: {
-      params: findStoreByIdStore
-    },
-    preHandler: [authMiddleware] 
+  app.get<{ Params: FindStoreByIdStore }>(
+    '/metrics/entries/:id_store',
+    {
+      schema: {
+        params: findStoreByIdStore,
+      },
     },
     (req, reply) => {
       return controller.findEntriesToday(req, reply)
-    }
+    },
   )
 
-  
-  app.get<{Params: FindStoreByIdStore}>(
-    "/metrics/departures/:id_store",
-    {schema: {
-      params: findStoreByIdStore
-    },
-    preHandler: [authMiddleware] 
+  app.get<{ Params: FindStoreByIdStore }>(
+    '/metrics/departures/:id_store',
+    {
+      schema: {
+        params: findStoreByIdStore,
+      },
     },
     (req, reply) => {
       return controller.findDeparturesToday(req, reply)
-    }
+    },
   )
 
-
-   app.get<{ Params: FindStoreByIdStore }>(
-     '/metrics/30/days/:id_store',
-     {
-       schema: {
-         params: findStoreByIdStore,
-       },
-       preHandler: [authMiddleware],
-     },
-     (req, reply) => {
-       return controller.findMetricsByLast30Days(req, reply)
-     },
-   )
-
-  
+  app.get<{ Params: FindStoreByIdStore }>(
+    '/metrics/30/days/:id_store',
+    {
+      schema: {
+        params: findStoreByIdStore,
+      },
+    },
+    (req, reply) => {
+      return controller.findMetricsByLast30Days(req, reply)
+    },
+  )
 }

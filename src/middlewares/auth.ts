@@ -5,11 +5,14 @@ import { StatusCodes } from 'http-status-codes'
 
 export default async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {
   try {
+    const isPublic = req.url.split('/')
+
+    if (isPublic.includes('auth')) return
+
     const token_ = req.cookies['access_token']
-    console.log(token_)
 
     if (!token_) {
-      return reply.status(StatusCodes.UNAUTHORIZED).send({ warning: 'Token não fornecido' })
+      return reply.status(StatusCodes.FORBIDDEN).send()
     }
 
     const decoded = jwt.verify(token_, process.env.JWT_SECRET ?? 'default_key') as Payload

@@ -55,6 +55,7 @@ model Store {
   store_bio String?
   products Product[]
   movements_stocks MovementStock[]
+  customers Customer[]
 }
 
 
@@ -105,33 +106,41 @@ enum TypeCustomer {
 
 
 model Customer {
-  id_customer String @id @default(uuid())
-  name_customer String 
-  type TypeCustomer 
-  document_customer String 
-  email_customer String 
-  phone_customer String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  active Boolean @default(true)
-  id_address String
-  addresses CustomerAddress[]
-  
-  // novos campos ---> proxima atualização
-}
+  id_customer       String @id @default(uuid())
+  name_customer     String
+  type              TypeCustomer
+  document_customer String
+  email_customer    String?
+  phone_customer    String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  active            Boolean @default(true)
 
+  id_store          String
+  store             Store   @relation(fields: [id_store], references: [id_store])
+
+  // Endereço principal (opcional)
+  id_address        String? @unique 
+  mainAddress       CustomerAddress? @relation("CustomerMainAddress", fields: [id_address], references: [id_customerAddress], onDelete: SetNull)
+
+  // Lista de endereços
+  addresses         CustomerAddress[] @relation("CustomerAddresses")
+}
 
 model CustomerAddress {
   id_customerAddress String @id @default(uuid())
-  id_customer String 
-  customer Customer @relation(fields: [id_customer], references: [id_customer])
-  cep String
-  isDefault Boolean @default(false)
-  street String
-  number String
-  complement String
-  city String
-  state String
-  country String
 
+  id_customer        String
+  customer           Customer @relation("CustomerAddresses", fields: [id_customer], references: [id_customer], onDelete: Cascade)
+
+  cep                String
+  isDefault          Boolean @default(false)
+  street             String
+  number             String
+  complement         String?
+  city               String
+  state              String
+  country            String
+
+  mainOfCustomer Customer? @relation("CustomerMainAddress")  
 }

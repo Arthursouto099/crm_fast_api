@@ -27,7 +27,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
         params: findProductsByStore,
         querystring: paginationSchema,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.findAllByStore(
@@ -46,7 +45,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
       schema: {
         params: findProductById,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.find(req, reply)
@@ -59,7 +57,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
       schema: {
         body: createProductSchema,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.create(req, reply)
@@ -73,7 +70,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
         body: updateProductSchema,
         params: movementProduct,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.update(req, reply)
@@ -87,7 +83,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
         body: productStockDeltaSchema,
         params: movementProduct,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.movementProductStock(req, reply)
@@ -100,7 +95,6 @@ export default async function ProductRoutes(app: FastifyInstanceTyped) {
       schema: {
         params: findProductById,
       },
-      preHandler: [authMiddleware],
     },
     (req, reply) => {
       return controller.delete(req, reply)

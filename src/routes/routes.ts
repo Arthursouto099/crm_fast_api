@@ -6,6 +6,7 @@ import authRoutes from './user/auth.routes'
 import StoreRoutes from './store/store.routes'
 import ProjectRoutes from './product/product.routes'
 import MovementStockRoutes from './movementStock/movementStock.routes'
+import CustomerRoutes from './customer/customer.routes'
 
 const admSchema = z.object({
   name: z.string(),
@@ -17,5 +18,6 @@ export default async function routes(app: FastifyInstanceTyped) {
   app.register(authRoutes, { prefix: '/auth' })
   app.register(StoreRoutes, { prefix: '/store' })
   app.register(ProjectRoutes, { prefix: '/products' })
-  app.register(MovementStockRoutes, {prefix: "/movement"})
+  app.register(MovementStockRoutes, { prefix: '/movement' })
+  app.register(CustomerRoutes, { prefix: '/customer' })
 }

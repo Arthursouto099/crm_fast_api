@@ -17,7 +17,6 @@ export default function StoreRoutes(app: FastifyInstanceTyped) {
   app.get<{ Querystring: PaginationArgs }>(
     '/owner/all',
     {
-      preHandler: [authMiddleware],
       schema: {
         params: paginationSchema,
       },
@@ -36,7 +35,6 @@ export default function StoreRoutes(app: FastifyInstanceTyped) {
   app.get<{ Params: FindStoreByIdStore }>(
     '/owner/:id_store',
     {
-      preHandler: [authMiddleware],
       schema: {
         params: findStoreByIdStore,
       },
@@ -49,7 +47,6 @@ export default function StoreRoutes(app: FastifyInstanceTyped) {
   app.put<{ Params: FindStoreByIdStore; Body: UpdateStoreType }>(
     '/owner/:id_store',
     {
-      preHandler: [authMiddleware],
       schema: {
         body: updateStoreSchema,
         params: findStoreByIdStore,
@@ -63,7 +60,6 @@ export default function StoreRoutes(app: FastifyInstanceTyped) {
   app.post<{ Body: StoreType }>(
     '/owner',
     {
-      preHandler: [authMiddleware],
       schema: {
         body: storeZodSchema,
       },
@@ -76,7 +72,6 @@ export default function StoreRoutes(app: FastifyInstanceTyped) {
   app.delete<{ Params: FindStoreByIdStore }>(
     '/owner',
     {
-      preHandler: [authMiddleware],
       schema: {
         params: findStoreByIdStore,
       },
