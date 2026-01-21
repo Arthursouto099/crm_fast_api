@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { PrismaClient } from '../../../generated/client'
 import CustomerServices from '../../services/customer/customer.services'
 import {
+  CreateCustomerAddress,
   CreateCustomerBase,
   FindCustomerById,
   UpdateCustomerAddress,
@@ -51,9 +52,24 @@ export default class CustomerController {
     return reply.status(StatusCodes.OK).send({ customer: data })
   }
 
-  public async deleteCustomer(req: FastifyRequest<{ Params: FindCustomerById }>, reply: FastifyReply) {
+  public async deleteCustomer(
+    req: FastifyRequest<{ Params: FindCustomerById }>,
+    reply: FastifyReply,
+  ) {
     await this.service.deleteCustomer(req.params)
     return reply.status(StatusCodes.NO_CONTENT).send()
+  }
+
+  public async createAddress(
+    req: FastifyRequest<{ Body: CreateCustomerAddress }>,
+    reply: FastifyReply,
+  ) {
+    const data = await this.subService.createCustomerAddress(req.body)
+    await this.service.updateCustomer(
+      { mainAddress: { connect: { id_customerAddress: data.id_customerAddress } } },
+      { id_customer: data.id_customer },
+    )
+    return reply.status(StatusCodes.OK).send({ address: data })
   }
 
   public async updateAddress(
@@ -69,9 +85,9 @@ export default class CustomerController {
 
   public async deleteAddress(
     req: FastifyRequest<{
-      Params: {id_customerAddress: string}
+      Params: { id_customerAddress: string }
     }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     await this.subService.deleteAddress(req.params)
     return reply.status(StatusCodes.NO_CONTENT).send()

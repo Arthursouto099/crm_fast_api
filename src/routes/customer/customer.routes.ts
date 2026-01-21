@@ -2,6 +2,8 @@ import { CustomerUpdateInput } from '../../../generated/models'
 import CustomerController from '../../controllers/customer/customer.controller'
 import authMiddleware from '../../middlewares/auth'
 import {
+  CreateCustomerAddress,
+  createCustomerAddressSchema,
   CreateCustomerBase,
   createCustomerSchema,
   findCustomerById,
@@ -48,12 +50,12 @@ export default function CustomerRoutes(app: FastifyInstanceTyped) {
         )
       },
     ),
-    app.patch<{ Body: CustomerUpdateInput; Params: FindCustomerById }>(
-      '/:id_customer/edit',
+    app.patch<{ Body: CustomerUpdateInput; Params: FindCustomerById & FindStoreByIdStore }>(
+      '/:id_store/:id_customer/edit',
       {
         schema: {
           body: updateCustomerSchema.omit({ id_store: true }),
-          params: findCustomerById,
+          params: findCustomerById.extend(findStoreByIdStore.shape),
         },
       },
       (req, reply) => {
@@ -61,11 +63,11 @@ export default function CustomerRoutes(app: FastifyInstanceTyped) {
       },
     ))
 
-  app.delete<{ Params: FindCustomerById }>(
-    '/:id_customer/delete',
+  app.delete<{ Params: FindCustomerById & FindStoreByIdStore }>(
+    '/:id_store/:id_customer/delete',
     {
       schema: {
-        params: findCustomerById,
+        params: findCustomerById.extend(findStoreByIdStore.shape),
       },
     },
     (req, reply) => {
@@ -75,9 +77,9 @@ export default function CustomerRoutes(app: FastifyInstanceTyped) {
 
   app.patch<{
     Body: Omit<UpdateCustomerAddress, 'id_customer' | 'id_customerAddress'>
-    Params: { id_customerAddress: string }
+    Params: { id_customerAddress: string } & FindStoreByIdStore
   }>(
-    '/:id_customerAddress/address/edit',
+    '/:id_store/:id_customerAddress/address/edit',
     {
       schema: {
         body: updateCustomerAddressSchema.omit({ id_customer: true, id_customerAddress: true }),
@@ -89,8 +91,8 @@ export default function CustomerRoutes(app: FastifyInstanceTyped) {
     },
   )
 
-  app.delete<{ Params: { id_customerAddress: string } }>(
-    '/:id_customerAddress/address/delete',
+  app.delete<{ Params: { id_customerAddress: string } & FindStoreByIdStore }>(
+    '/:id_store/:id_customerAddress/address/delete',
     {
       schema: {
         params: z.object({ id_customerAddress: z.uuid() }),
@@ -98,6 +100,18 @@ export default function CustomerRoutes(app: FastifyInstanceTyped) {
     },
     (req, reply) => {
       return controller.deleteAddress(req, reply)
+    },
+  )
+
+  app.post<{ Body: CreateCustomerAddress, Params: FindStoreByIdStore}>(
+    '/:id_store/address/create',
+    {
+      schema: {
+        body: createCustomerAddressSchema,
+      },
+    },
+    (req, reply) => {
+      return controller.createAddress(req, reply)
     },
   )
 }
