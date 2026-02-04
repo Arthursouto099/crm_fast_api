@@ -56,6 +56,8 @@ model Store {
   products Product[]
   movements_stocks MovementStock[]
   customers Customer[]
+
+  sales Sale[]
 }
 
 
@@ -96,14 +98,77 @@ model Product {
   // quando tiver apenas n unidades, alertar de reposição
   low_stock_at Int?
   movement_stocks MovementStock[]
+
+  saleItems SaleItem[]
 }
 
+model Sale {
+  id_sale       String    @id @default(uuid())
+  id_store      String
+  id_customer   String?
+
+  totalAmount   Decimal   @db.Decimal(10, 2)
+  discount      Decimal?  @db.Decimal(10, 2)
+  finalAmount   Decimal   @db.Decimal(10, 2)
+
+  status        SaleStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  // paymentStatus PaymentStatus @default(PENDING)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relacionamentos
+  customer      Customer? @relation(fields: [id_customer], references: [id_customer])
+  store         Store     @relation(fields: [id_store], references: [id_store])
+  items         SaleItem[]
+
+  @@index([id_store])
+  @@index([id_customer])
+}
+
+enum SaleStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+
+model SaleItem {
+  id_sale_item String   @id @default(uuid())
+  id_sale      String
+  id_product   String
+
+  quantity     Int
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  totalPrice  Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+
+
+  sale        Sale     @relation(fields: [id_sale], references: [id_sale], onDelete: Cascade)
+  product     Product  @relation(fields: [id_product], references: [id_product])
+
+  @@index([id_sale])
+  @@index([id_product])
+}
 
 enum TypeCustomer {
   PF
   PJ
 }
-
 
 model Customer {
   id_customer       String @id @default(uuid())
@@ -125,6 +190,8 @@ model Customer {
 
   // Lista de endereços
   addresses         CustomerAddress[] @relation("CustomerAddresses")
+
+  sales Sale[]
 }
 
 model CustomerAddress {
